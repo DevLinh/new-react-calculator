@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 export class Output extends Component {
   render() {
-    return <div>This is the Output</div>;
+    return (
+      <div className="outputScreen" id="display">
+        {this.props.currentValue}
+      </div>
+    );
   }
 }
 
