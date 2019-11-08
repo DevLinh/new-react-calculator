@@ -68,6 +68,35 @@ export class Calculator extends Component {
     }
   }
 
+  handleOperators(e) {
+    if (!this.state.currentVal.includes("Limit")) {
+      const value = e.target.value;
+      const { formula, prevVal, evaluated } = this.state;
+      this.setState({ currentValue: value, evaluated: false });
+      if (evaluated) {
+        // when click '=' and then evaluated: true
+        this.setState({ formula: prevVal + value }); // prevVal: '4', value = '/' ->>> formula: '4/'
+      } else if (!endsWithOperator.test(formula)) {
+        // formula: '4/5'
+        this.setState({
+          prevVal: formula, // prevVal: '4/5'
+          formula: formula + value // value: '*' ->> formula: '4/5*'
+        });
+      } else if (!endsWithNegativeSign.test(formula)) {
+        // example: prevVal: '5/5' and formula: '5/5*'
+        this.setState({
+          formula:
+            (endsWithNegativeSign.test(formula + value) ? formula : prevVal) +
+            value // value: '-' ->> endsWithNagetiveSign.test('5/5*-') return true, so formula will be '5/5*' + '-' and else, value: '+' then formula is change form '5/5*' to '5/5+'
+        });
+      } else if (value !== "-") {
+        this.setState({
+          formula: prevVal + value
+        });
+      }
+    }
+  }
+
   render() {
     return (
       <div>
