@@ -123,6 +123,48 @@ export class Calculator extends Component {
     }
   }
 
+  handleDecimal() {
+    if (this.state.evaluated === true) {
+      this.setState({
+        currentVal: "0.",
+        formula: "0.",
+        evaluated: false
+      });
+    } else if (
+      !this.state.currentVal.includes(".") &&
+      !this.state.currentVal.includes("Limit")
+    ) {
+      this.setState({ evaluated: false });
+      if (this.state.currentVal.length > 21) {
+        this.maxDigitWarning();
+      }
+    } else if (
+      endsWithOperator.test(this.state.formula) ||
+      (this.state.currentVal === "0" && this.state.formula === "")
+    ) {
+      this.setState({
+        currentVal: "0.",
+        formula: this.state.formula + "0."
+      });
+    } else {
+      this.setState({
+        formula: this.state.formula + ".",
+        currentVal: this.state.formula.match(/(-?\d+\.?\d*)$/) + "." // ex: formula: 4 - 5 = -1 ->> currentVal: -1. or 6 / 2 = 3 ->> currentVal: 3.
+      });
+    }
+  }
+
+  initialize() {
+    this.setState({
+      currentVal: "0",
+      prevVal: "0",
+      formula: "",
+      currentSign: "pos",
+      lastClicked: "",
+      evaluated: false
+    });
+  }
+
   render() {
     return (
       <div>
