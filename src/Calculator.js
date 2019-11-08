@@ -9,6 +9,7 @@ const isOperator = /[x/+-]/,
   endsWithNegativeSign = /[x/+]-$/,
   clearStyle = { background: "#ac3939" },
   operatorStyle = { background: "#666666" },
+  maxNumberLength = 21,
   equalsStyle = {
     background: "#004466",
     position: "absolute",
@@ -92,6 +93,31 @@ export class Calculator extends Component {
       } else if (value !== "-") {
         this.setState({
           formula: prevVal + value
+        });
+      }
+    }
+  }
+
+  handleNumbers(e) {
+    if (!this.state.currentVal.includes("Limit")) {
+      const { currentVal, formula, evaluated } = this.state;
+      const value = e.target.value;
+      this.setState({ evaluated: false });
+      if (currentVal.length > maxNumberLength) {
+        this.maxDigitWarning();
+      } else if (evaluated) {
+        this.setState({
+          currentVal: value,
+          formula: value !== "0" ? value : ""
+        });
+      } else {
+        this.setState({
+          currentVal:
+            currentVal === "0" || isOperator.test(currentVal)
+              ? value
+              : currentVal + value,
+          formula:
+            currentVal === "0" && value === "0" ? formula : formula + value
         });
       }
     }
