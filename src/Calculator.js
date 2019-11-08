@@ -6,6 +6,7 @@ export class Calculator extends Component {
   render() {
     return (
       <div>
+        what the fuck happening
         <Formula />
         <Output />
         <Button />
