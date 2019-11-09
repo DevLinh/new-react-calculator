@@ -2,20 +2,12 @@ import React, { Component } from "react";
 import Button from "./component/Button";
 import Output from "./component/Output";
 import Formula from "./component/Formula";
-
+import ReactFCCtest from "react-fcctest";
 // Define some vars by Regx and some vars style:
 const isOperator = /[x/+-]/,
   endsWithOperator = /[x/+-]$/,
   endsWithNegativeSign = /[x/+]-$/,
-  clearStyle = { background: "#ac3939" },
-  operatorStyle = { background: "#666666" },
-  maxNumberLength = 21,
-  equalsStyle = {
-    background: "#004466",
-    position: "absolute",
-    height: 130,
-    bottom: 5
-  };
+  maxNumberLength = 21;
 export class Calculator extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +19,12 @@ export class Calculator extends Component {
       lastClicked: "",
       evaluated: false
     };
+    this.maxDigitWarning = this.maxDigitWarning.bind(this);
+    this.handleOperators = this.handleOperators.bind(this);
+    this.handleEvaluate = this.handleEvaluate.bind(this);
+    this.initialize = this.initialize.bind(this);
+    this.handleDecimal = this.handleDecimal.bind(this);
+    this.handleNumbers = this.handleNumbers.bind(this);
   }
 
   //handle digit length
@@ -37,7 +35,7 @@ export class Calculator extends Component {
       prevVal: this.state.currentVal
     });
     //set currentValue to previousValue after 1000ms
-    setTimeout(() => this.setState({ currentValue: this.state.prevVal }, 1000));
+    setTimeout(() => this.setState({ currentValue: this.state.prevVal }), 1000);
   }
 
   //handle the Evaluation
@@ -59,9 +57,9 @@ export class Calculator extends Component {
       //The eval() function evaluates JavaScript code represented as a string.
       //var expression = new String('2 + 2');
       //eval(expression.toString()); // returns 4
-      let answer = Math.round(1000000000 * eval(exp)) / 1000000000;
+      let answer = Math.round(1000000000000 * eval(exp)) / 1000000000000;
       this.setState({
-        currentValue: answer.toString(),
+        currentVal: answer.toString(),
         formula: exp.replace(/\*/g, "x").replace(/-/g, "-") + "=" + answer, //rewrite the formula to display
         prevVal: answer,
         evaluated: true
@@ -73,7 +71,8 @@ export class Calculator extends Component {
     if (!this.state.currentVal.includes("Limit")) {
       const value = e.target.value;
       const { formula, prevVal, evaluated } = this.state;
-      this.setState({ currentValue: value, evaluated: false });
+      this.setState({ currentVal: value, evaluated: false });
+      console.log(this.state.currentVal);
       if (evaluated) {
         // when click '=' and then evaluated: true
         this.setState({ formula: prevVal + value }); // prevVal: '4', value = '/' ->>> formula: '4/'
@@ -117,7 +116,11 @@ export class Calculator extends Component {
               ? value
               : currentVal + value,
           formula:
-            currentVal === "0" && value === "0" ? formula : formula + value
+            currentVal === "0" && value === "0"
+              ? formula
+              : /([^.0-9]0)$/.test(formula)
+              ? formula.slice(0, -1) + value
+              : formula + value
         });
       }
     }
@@ -137,20 +140,20 @@ export class Calculator extends Component {
       this.setState({ evaluated: false });
       if (this.state.currentVal.length > 21) {
         this.maxDigitWarning();
+      } else if (
+        endsWithOperator.test(this.state.formula) ||
+        (this.state.currentVal === "0" && this.state.formula === "")
+      ) {
+        this.setState({
+          currentVal: "0.",
+          formula: this.state.formula + "0."
+        });
+      } else {
+        this.setState({
+          formula: this.state.formula + ".",
+          currentVal: this.state.formula.match(/(-?\d+\.?\d*)$/)[0] + "." // ex: formula: 4 - 5 = -1 ->> currentVal: -1. or 6 / 2 = 3 ->> currentVal: 3.
+        });
       }
-    } else if (
-      endsWithOperator.test(this.state.formula) ||
-      (this.state.currentVal === "0" && this.state.formula === "")
-    ) {
-      this.setState({
-        currentVal: "0.",
-        formula: this.state.formula + "0."
-      });
-    } else {
-      this.setState({
-        formula: this.state.formula + ".",
-        currentVal: this.state.formula.match(/(-?\d+\.?\d*)$/) + "." // ex: formula: 4 - 5 = -1 ->> currentVal: -1. or 6 / 2 = 3 ->> currentVal: 3.
-      });
     }
   }
 
@@ -167,10 +170,17 @@ export class Calculator extends Component {
 
   render() {
     return (
-      <div>
-        <Formula formula="+" />
-        <Output currentValue="0000" />
-        <Button />
+      <div className="calculator">
+        <Formula formula={this.state.formula} />
+        <Output currentValue={this.state.currentVal} />
+        <Button
+          decimal={this.handleDecimal}
+          evaluate={this.handleEvaluate}
+          initialize={this.initialize}
+          numbers={this.handleNumbers}
+          operators={this.handleOperators}
+        />
+        <ReactFCCtest />
       </div>
     );
   }
