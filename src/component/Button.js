@@ -1,13 +1,7 @@
 import React, { Component } from "react";
 
 const clearStyle = { background: "#ac3939" },
-  operatorStyle = { background: "#666666" },
-  equalsStyle = {
-    background: "#004466",
-    position: "absolute",
-    height: 130,
-    bottom: 5
-  };
+  operatorStyle = { background: "#666666" };
 export class Button extends Component {
   render() {
     //create button's layout
@@ -81,7 +75,12 @@ export class Button extends Component {
         <button id="three" value="3" onClick={this.props.numbers}>
           3
         </button>
-        <button id="zero" value="0" onClick={this.props.numbers}>
+        <button
+          id="zero"
+          value="0"
+          onClick={this.props.numbers}
+          className="jumbo"
+        >
           0
         </button>
         <button id="decimal" value="." onClick={this.props.decimal}>
@@ -91,8 +90,7 @@ export class Button extends Component {
           id="equals"
           value="="
           onClick={this.props.evaluate}
-          className="jumbo"
-          style={equalsStyle}
+          style={this.props.equalsStyleButton}
         >
           =
         </button>

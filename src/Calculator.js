@@ -3,11 +3,18 @@ import Button from "./component/Button";
 import Output from "./component/Output";
 import Formula from "./component/Formula";
 import ReactFCCtest from "react-fcctest";
+import "./Calculator.scss";
 // Define some vars by Regx and some vars style:
 const isOperator = /[x/+-]/,
   endsWithOperator = /[x/+-]$/,
   endsWithNegativeSign = /[x/+]-$/,
-  maxNumberLength = 21;
+  maxNumberLength = 21,
+  equalsStyle = {
+    background: "#004466",
+    position: "absolute",
+    height: 140,
+    bottom: 5
+  };
 export class Calculator extends Component {
   constructor(props) {
     super(props);
@@ -179,6 +186,7 @@ export class Calculator extends Component {
           initialize={this.initialize}
           numbers={this.handleNumbers}
           operators={this.handleOperators}
+          equalsStyleButton={equalsStyle}
         />
         <ReactFCCtest />
       </div>
